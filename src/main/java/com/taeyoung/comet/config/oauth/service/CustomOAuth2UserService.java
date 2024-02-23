@@ -40,6 +40,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
          */
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
+        log.info(oAuth2User.getAttributes().toString());
 
         /**
          * userRequest에서 registrationId 추출 후 registrationId으로 SocialType 저장
