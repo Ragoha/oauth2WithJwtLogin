@@ -4,7 +4,7 @@ package com.taeyoung.comet.config.jwt.filter;
 import com.taeyoung.comet.config.jwt.service.JwtService;
 import com.taeyoung.comet.config.jwt.util.PasswordUtil;
 import com.taeyoung.comet.entity.User;
-import com.taeyoung.comet.repository.UserRepository;
+import com.taeyoung.comet.repository.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -41,7 +41,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     private static final String NO_CHECK_URL = "/login"; // "/login"으로 들어오는 요청은 Filter 작동 X
 
     private final JwtService jwtService;
-    private final UserRepository userRepository;
+
+    private final UserJpaRepository userJpaRepository;
 
     private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 
@@ -84,7 +85,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
      *  그 후 JwtService.sendAccessTokenAndRefreshToken()으로 응답 헤더에 보내기
      */
     public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
-        userRepository.findByRefreshToken(refreshToken)
+        userJpaRepository.findByRefreshToken(refreshToken)
                 .ifPresent(user -> {
                     String reIssuedRefreshToken = reIssueRefreshToken(user);
                     jwtService.sendAccessAndRefreshToken(response, jwtService.createAccessToken(user.getEmail()),
@@ -100,7 +101,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     private String reIssueRefreshToken(User user) {
         String reIssuedRefreshToken = jwtService.createRefreshToken();
         user.updateRefreshToken(reIssuedRefreshToken);
-        userRepository.saveAndFlush(user);
+        userJpaRepository.saveAndFlush(user);
         return reIssuedRefreshToken;
     }
 
@@ -119,7 +120,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         jwtService.extractAccessToken(request)
                 .filter(jwtService::isTokenValid)
                 .ifPresent(accessToken -> jwtService.extractEmail(accessToken)
-                        .ifPresent(email -> userRepository.findByEmail(email)
+                        .ifPresent(email -> userJpaRepository.findByEmail(email)
                                 .ifPresent(this::saveAuthentication)));
 
         filterChain.doFilter(request, response);

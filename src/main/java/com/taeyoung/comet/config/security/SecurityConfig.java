@@ -10,7 +10,7 @@ import com.taeyoung.comet.config.login.service.LoginService;
 import com.taeyoung.comet.config.oauth.handler.OAuth2LoginFailureHandler;
 import com.taeyoung.comet.config.oauth.handler.OAuth2LoginSuccessHandler;
 import com.taeyoung.comet.config.oauth.service.CustomOAuth2UserService;
-import com.taeyoung.comet.repository.UserRepository;
+import com.taeyoung.comet.repository.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,7 +36,7 @@ public class SecurityConfig {
 
     private final LoginService loginService;
     private final JwtService jwtService;
-    private final UserRepository userRepository;
+    private final UserJpaRepository userJpaRepository;
     private final ObjectMapper objectMapper;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
@@ -108,7 +108,7 @@ public class SecurityConfig {
      */
     @Bean
     public LoginSuccessHandler loginSuccessHandler() {
-        return new LoginSuccessHandler(jwtService, userRepository);
+        return new LoginSuccessHandler(jwtService, userJpaRepository);
     }
 
     /**
@@ -137,7 +137,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
-        JwtAuthenticationProcessingFilter jwtAuthenticationFilter = new JwtAuthenticationProcessingFilter(jwtService, userRepository);
+        JwtAuthenticationProcessingFilter jwtAuthenticationFilter = new JwtAuthenticationProcessingFilter(jwtService, userJpaRepository);
         return jwtAuthenticationFilter;
     }
 }

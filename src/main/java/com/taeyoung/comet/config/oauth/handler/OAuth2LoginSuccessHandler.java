@@ -4,7 +4,7 @@ import com.taeyoung.comet.config.jwt.service.JwtService;
 import com.taeyoung.comet.config.oauth.CustomOAuth2User;
 import com.taeyoung.comet.entity.Role;
 import com.taeyoung.comet.entity.User;
-import com.taeyoung.comet.repository.UserRepository;
+import com.taeyoung.comet.repository.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -23,7 +23,7 @@ import java.net.URLEncoder;
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtService jwtService;
-    private final UserRepository userRepository;
+    private final UserJpaRepository userJpaRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -36,7 +36,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
 //                response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
 
-                User findUser = userRepository.findByEmail(oAuth2User.getEmail())
+                User findUser = userJpaRepository.findByEmail(oAuth2User.getEmail())
                         .orElseThrow(() -> new IllegalArgumentException("이메일에 해당하는 유저가 없습니다."));
 
                 response.sendRedirect("http://localhost:3000/oauth/join"

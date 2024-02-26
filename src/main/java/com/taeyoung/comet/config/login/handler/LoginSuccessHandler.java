@@ -1,7 +1,7 @@
 package com.taeyoung.comet.config.login.handler;
 
 import com.taeyoung.comet.config.jwt.service.JwtService;
-import com.taeyoung.comet.repository.UserRepository;
+import com.taeyoung.comet.repository.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtService jwtService;
-    private final UserRepository userRepository;
+    private final UserJpaRepository userJpaRepository;
 
     @Value("${jwt.access.expiration}")
     private String accessTokenExpiration;
@@ -31,10 +31,10 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
         jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken); // 응답 헤더에 AccessToken, RefreshToken 실어서 응답
 
-        userRepository.findByEmail(email)
+        userJpaRepository.findByEmail(email)
                 .ifPresent(user -> {
                     user.updateRefreshToken(refreshToken);
-                    userRepository.saveAndFlush(user);
+                    userJpaRepository.saveAndFlush(user);
                 });
         log.info("로그인에 성공하였습니다. 이메일 : {}", email);
         log.info("로그인에 성공하였습니다. AccessToken : {}", accessToken);

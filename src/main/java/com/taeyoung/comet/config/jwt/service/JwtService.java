@@ -2,7 +2,7 @@ package com.taeyoung.comet.config.jwt.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.taeyoung.comet.repository.UserRepository;
+import com.taeyoung.comet.repository.UserJpaRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +44,7 @@ public class JwtService {
     private static final String EMAIL_CLAIM = "email";
     private static final String BEARER = "Bearer ";
 
-    private final UserRepository userRepository;
+    private final UserJpaRepository userJpaRepository;
 
     /**
      * AccessToken 생성 메소드
@@ -156,7 +156,7 @@ public class JwtService {
      * RefreshToken DB 저장(업데이트)
      */
     public void updateRefreshToken(String email, String refreshToken) {
-        userRepository.findByEmail(email)
+        userJpaRepository.findByEmail(email)
                 .ifPresentOrElse(
                         user -> user.updateRefreshToken(refreshToken),
                         () -> new Exception("일치하는 회원이 없습니다.")
