@@ -1,6 +1,7 @@
 package com.taeyoung.comet.config.login.handler;
 
 import com.taeyoung.comet.config.jwt.service.JwtService;
+import com.taeyoung.comet.repository.RefreshTokenRepository;
 import com.taeyoung.comet.repository.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

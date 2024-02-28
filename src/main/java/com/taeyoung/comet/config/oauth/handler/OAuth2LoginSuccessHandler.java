@@ -2,8 +2,10 @@ package com.taeyoung.comet.config.oauth.handler;
 
 import com.taeyoung.comet.config.jwt.service.JwtService;
 import com.taeyoung.comet.config.oauth.CustomOAuth2User;
+import com.taeyoung.comet.entity.RefreshToken;
 import com.taeyoung.comet.entity.Role;
 import com.taeyoung.comet.entity.User;
+import com.taeyoung.comet.repository.RefreshTokenRepository;
 import com.taeyoung.comet.repository.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtService jwtService;
     private final UserJpaRepository userJpaRepository;
+
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -66,5 +70,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
         jwtService.updateRefreshToken(oAuth2User.getEmail(), refreshToken);
+        refreshTokenRepository.save(RefreshToken.builder()
+                .userId(oAuth2User.getEmail())
+                .token(refreshToken)
+                .build());
     }
 }

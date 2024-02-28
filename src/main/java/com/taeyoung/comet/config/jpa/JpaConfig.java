@@ -11,7 +11,7 @@ import javax.persistence.PersistenceContext;
 
 @Configuration
 @EnableJpaAuditing
-@EnableJpaRepositories(basePackages = "com.taeyoung.comet")
+//@EnableJpaRepositories(basePackages = "com.taeyoung.comet")
 public class JpaConfig {
 
     @PersistenceContext

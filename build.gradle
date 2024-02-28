@@ -44,6 +44,10 @@ dependencies {
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
     implementation "com.querydsl:querydsl-core:${queryDslVersion}"
+
+    // https://mvnrepository.com/artifact/org.springframework.data/spring-data-redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 }
 
 //QueryDSL 플로그인 설정 START
